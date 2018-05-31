@@ -6,95 +6,92 @@ let ganador = false;
 let puestosDisponibles = ["A1", "A2", "A3", "B1", "B2", "B3", "C1", "C2", "C3"];
 const cuadros = document.getElementsByName("espacio");
 
-function juego() {
+function iniciarJuego() {
     cuadros.forEach((valor) => {
         valor.addEventListener('click', jugar);
     });
 
     function jugar(ev) {
-
+        // if (puestosDisponibles.length == 0) {
+        //     document.removeEventListener('click', jugar);
+        //     setTimeout(() => alert("GAME OVER!!!"), 0);
+        //     // alert("GAME OVER 2");
+        // }
         if (jugador == 1) {
             ev.srcElement.textContent = "X";
+            // Otra forma es con un indexOf() y splice()
             puestosDisponibles = puestosDisponibles.filter((puesto) => puesto != ev.target.id);
+            jugadas1.push(ev.target.id);
             ev.srcElement.removeEventListener('click', jugar);
-            console.log("Array despues de Jugada 1= " + puestosDisponibles);
-            console.log("Let Jugador= " + jugador);
             if (puestosDisponibles.length < 5) {
-                // Creo que se podria uitlizar un generador para solvertar la funcionabilida de validarGanador()
-                if (validarGanador(["A1", "B1", "C1"])) {
-                    ganador = true;
-
-                } else if (validarGanador(["A2", "B2", "C2"])) {
-                    ganador = true;
-                } else if (validarGanador(["A3", "B3", "C3"])) {
-                    ganador = true;
-                } else if (validarGanador(["A1", "A2", "A3"])) {
-                    ganador = true;
-                } else if (validarGanador(["B1", "B2", "B3"])) {
-                    ganador = true;
-                } else if (validarGanador(["C1", "C2", "C3"])) {
-                    ganador = true;
-                } else if (validarGanador(["A1", "B2", "C3"])) {
-                    ganador = true;
-                } else if (validarGanador(["A3", "B2", "C1"])) {
-                    ganador = true;
-                }
-
-                if (ganador){
-                    swal("ganador");
+                ganador = true;
+                if (validarGanador(jugadas1)) {
+                    swal({
+                        title: "¡Felicitaciones!",
+                        text: "Jugador X ha Ganado!!!",
+                        buttons: false,
+                        timer: 1500,
+                    });
                     puestosDisponibles.length = 0;
                 }
-
-
             }
-
-            if (puestosDisponibles.length == 0) {
-                document.removeEventListener('click', jugar);
-                setTimeout(() => alert("GAME OVER!!!"), 0);
-                // alert("GAME OVER 2");
-            }
-
             jugador = 2;
-        }
-
-        else {
+        } else {
             ev.srcElement.textContent = "O";
             puestosDisponibles = puestosDisponibles.filter((puesto) => puesto != ev.target.id);
+            jugadas2.push(ev.target.id);
             ev.srcElement.removeEventListener('click', jugar);
+            if (puestosDisponibles.length < 5) {
+                ganador = true;
+                if (validarGanador(jugadas2)) {
+                    swal({
+                        title: "¡Felicitaciones!",
+                        text: "Jugador O ha Ganado!!!",
+                        buttons: false,
+                        timer: 1500,
+                    });
+                    puestosDisponibles.length = 0;
+                }
+            }
             jugador = 1;
-            console.log("Array despues de Jugada 2= " + puestosDisponibles);
-            console.log("Let Jugador2= " + jugador);
+        }
+
+        if (puestosDisponibles.length == 0) {
+            let delay = 0;
+            if(ganador){
+                delay = 2000;
+            }else{
+                delay = 500;
+            }
+            document.removeEventListener('click', jugar);
+
+            setTimeout(() => {
+                swal({
+                    title: "¡Game Over!",
+                    text: "Juego Terminado!!!",
+                    buttons: false,
+                });
+            }, delay);
+            // alert("GAME OVER 2");
         }
     }
 
-    function validarGanador() {
-
+    function validarGanador(jugadas) {
+        if ((["A1", "B1", "C1"].filter((ganadora) => jugadas.includes(ganadora)).length) == 3) return true;
+        if ((["A2", "B2", "C2"].filter((ganadora) => jugadas.includes(ganadora)).length) == 3) return true;
+        if ((["A3", "B3", "C3"].filter((ganadora) => jugadas.includes(ganadora)).length) == 3) return true;
+        if ((["A1", "A2", "A3"].filter((ganadora) => jugadas.includes(ganadora)).length) == 3) return true;
+        if ((["B1", "B2", "B3"].filter((ganadora) => jugadas.includes(ganadora)).length) == 3) return true;
+        if ((["B1", "B2", "B3"].filter((ganadora) => jugadas.includes(ganadora)).length) == 3) return true;
+        if ((["C1", "C2", "C3"].filter((ganadora) => jugadas.includes(ganadora)).length) == 3) return true;
+        if ((["A1", "B2", "C3"].filter((ganadora) => jugadas.includes(ganadora)).length) == 3) return true;
+        if ((["A3", "B2", "C1"].filter((ganadora) => jugadas.includes(ganadora)).length) == 3) return true;
+        return false;
     }
-
-// if(modoDeJuego)
-
-// function validarGanador() {
-//
-//
-// }
-
-
-}
-
-
-function onclick(ev) {
-    console.log(ev);
-    // console.log("hola");
-    // console.log(ev.srcElement);
-
-    let el = document.getElementById(ev.target.id);
-    ev.srcElement.textContent = "X"
-    // el.textContent = "X"
 }
 
 function juegoNuevo() {
     //
-
 }
 
-juego();
+iniciarJuego();
